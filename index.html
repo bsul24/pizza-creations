@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./style.css" />
+    <script defer src="./script.js"></script>
+    <title>Pizza Creations</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="buttons">
+        <button class="add-btn">Add Topping</button>
+      </div>
+      <form class="topping-form">
+        <input type="text" name="add-topping" id="add-topping" />
+        <button class="add-submit-btn" type="submit">Add</button>
+      </form>
+      <ul class="toppings">
+        <li class="topping" data-topping="Pepperoni">
+          <span>Pepperoni</span> <button class="delete-btn">X</button>
+          <button class="edit-btn">✏️</button>
+        </li>
+        <li class="topping" data-topping="Sausage">
+          Sausage <button class="delete-btn">X</button>
+          <button class="edit-btn">✏️</button>
+        </li>
+        <li class="topping" data-topping="Mushroom">
+          Mushroom <button class="delete-btn">X</button>
+          <button class="edit-btn">✏️</button>
+        </li>
+        <li class="topping" data-topping="Onion">
+          Onion <button class="delete-btn">X</button>
+          <button class="edit-btn">✏️</button>
+        </li>
+        <li class="topping" data-topping="Green Pepper">
+          Green Pepper <button class="delete-btn">X</button>
+          <button class="edit-btn">✏️</button>
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>
