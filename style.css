@@ -60,3 +60,57 @@ input {
 .hidden {
   display: none;
 }
+
+.create-btn {
+  display: block;
+  margin: 48px auto 0;
+}
+
+.new-pizza-container {
+  margin: 24px 0;
+  height: 64px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.new-pizza {
+  list-style: none;
+}
+
+.pizza-tiles {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.pizza-tile {
+  background-color: #adb5bd;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-radius: 9px;
+}
+
+.pizza-name {
+  font-size: 30px;
+  margin-bottom: 12px;
+}
+
+.pizza-toppings {
+  margin-bottom: 8px;
+  text-decoration: underline;
+}
+
+.toppings-list {
+  list-style: none;
+}
+
+.pizza-tile-edit-btn {
+  align-self: flex-end;
+  border-top-right-radius: 9px;
+}

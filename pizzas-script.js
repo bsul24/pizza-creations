@@ -1,6 +1,7 @@
 "use strict";
 
 const createBtn = document.querySelector(".create-btn");
+const newPizzaContainer = document.querySelector(".new-pizza-container");
 const seePizzasBtn = document.querySelector(".see-pizzas");
 const pizzaTiles = document.querySelector(".pizza-tiles");
 const pizzas = [];
@@ -35,9 +36,9 @@ class NewPizza {
       <button class="add-ing-btn">Add</button>
       <button class="save-pizza-btn">Save Pizza</button>
     </ul>`;
-    createBtn.insertAdjacentHTML("afterend", ul);
-    this.addDropDownChangeListeners();
-    this.addDeleteToppingListeners();
+    newPizzaContainer.insertAdjacentHTML("afterbegin", ul);
+    this.addDropDownChangeHandlers();
+    this.addDeleteToppingHandlers();
     this.addIngBtn = document.querySelector(".add-ing-btn");
     this.addIngBtn.addEventListener("click", this.addIngredient.bind(this));
     const saveBtn = document.querySelector(".save-pizza-btn");
@@ -83,8 +84,8 @@ class NewPizza {
       </li>
     `;
     this.addIngBtn.insertAdjacentHTML("beforebegin", newIngHTML);
-    this.addDropDownChangeListeners();
-    this.addDeleteToppingListeners();
+    this.addDropDownChangeHandlers();
+    this.addDeleteToppingHandlers();
     this.updateToppingNumbers();
   }
 
@@ -102,14 +103,14 @@ class NewPizza {
     this.updateToppings();
   }
 
-  addDropDownChangeListeners() {
+  addDropDownChangeHandlers() {
     const dropDowns = [...document.querySelectorAll(".new-pizza-toppings")];
     dropDowns.forEach((drop) =>
       drop.addEventListener("change", this.updateToppings.bind(this))
     );
   }
 
-  addDeleteToppingListeners() {
+  addDeleteToppingHandlers() {
     const deleteBtns = [...document.querySelectorAll(".delete-topping-btn")];
     deleteBtns.forEach((btn) =>
       btn.addEventListener("click", this.deleteTopping.bind(this))
@@ -137,11 +138,15 @@ class NewPizza {
 
   removeUI() {
     const newPizzaUI = document.querySelector(".new-pizza");
-    newPizzaUI.innerHTML = "";
+    newPizzaUI.remove();
   }
 }
 
 class Pizza {
+  thisTile;
+  thisName;
+  thisToppings;
+
   constructor(pizza) {
     this.name = pizza.pizzaName;
     this.toppings = pizza.pizzaToppings;
@@ -151,6 +156,7 @@ class Pizza {
   generateMarkup() {
     const html = `
       <div class="pizza-tile">
+      <button class="pizza-tile-edit-btn">✏️</button>
         <h2 class="pizza-name">${this.name}</h2>
         <h3 class="pizza-toppings">Toppings</h3>
         <ul class="toppings-list">
@@ -159,6 +165,8 @@ class Pizza {
       </div>
     `;
     pizzaTiles.insertAdjacentHTML("beforeend", html);
+    this.storeDOM();
+    this.addEditBtnHandler();
   }
 
   generateToppings() {
@@ -166,6 +174,33 @@ class Pizza {
       (acc, top) => acc + `<li class="toppings-list-topping">${top}</li>`,
       ``
     );
+  }
+
+  addEditBtnHandler() {
+    const editBtn = this.thisTile.querySelector(".pizza-tile-edit-btn");
+    editBtn.addEventListener("click", this.startEditMode.bind(this));
+  }
+
+  storeDOM() {
+    this.thisTile = document.querySelector(".pizza-tile:last-child");
+    this.thisName = this.thisTile.querySelector(".pizza-name");
+    this.thisToppings = this.thisTile.querySelectorAll(
+      ".toppings-list-topping"
+    );
+  }
+
+  startEditMode() {
+    this.thisName.setHTML(`<input type="text" value="${this.name}" />`);
+    const saveBtn = `<button class="edit-save-btn">Save</button>`;
+    this.thisTile.insertAdjacentHTML("beforeend", saveBtn);
+    this.thisTile
+      .querySelector(".edit-save-btn")
+      .addEventListener("click", this.endEditMode.bind(this));
+  }
+
+  endEditMode() {
+    this.name = this.thisTile.querySelector("input").value;
+    this.thisName.setHTML(`<h2 class="pizza-name">${this.name}</h2>`);
   }
 }
 
