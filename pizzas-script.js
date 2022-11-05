@@ -2,6 +2,7 @@
 
 const createBtn = document.querySelector(".create-btn");
 const seePizzasBtn = document.querySelector(".see-pizzas");
+const pizzaTiles = document.querySelector(".pizza-tiles");
 const pizzas = [];
 let newPizza;
 
@@ -128,8 +129,9 @@ class NewPizza {
       return acc;
     }, []);
     this.pizzaToppings = toppingNames;
-    pizzas.push(this);
+    // pizzas.push(this);
     newPizza = "";
+    generateNewPizza(this);
     this.removeUI();
   }
 
@@ -139,12 +141,42 @@ class NewPizza {
   }
 }
 
+class Pizza {
+  constructor(pizza) {
+    this.name = pizza.pizzaName;
+    this.toppings = pizza.pizzaToppings;
+    this.generateMarkup();
+  }
+
+  generateMarkup() {
+    const html = `
+      <div class="pizza-tile">
+        <h2 class="pizza-name">${this.name}</h2>
+        <h3 class="pizza-toppings">Toppings</h3>
+        <ul class="toppings-list">
+          ${this.generateToppings()}
+        </ul>
+      </div>
+    `;
+    pizzaTiles.insertAdjacentHTML("beforeend", html);
+  }
+
+  generateToppings() {
+    return this.toppings.reduce(
+      (acc, top) => acc + `<li class="toppings-list-topping">${top}</li>`,
+      ``
+    );
+  }
+}
+
 const startNewPizza = function () {
   if (newPizza) return;
   newPizza = new NewPizza();
 };
 
+const generateNewPizza = function (pizza) {
+  const newPizza = new Pizza(pizza);
+  pizzas.push(newPizza);
+};
+
 createBtn.addEventListener("click", startNewPizza);
-seePizzasBtn.addEventListener("click", function () {
-  console.log(pizzas);
-});
