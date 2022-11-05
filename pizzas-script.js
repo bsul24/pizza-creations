@@ -1,14 +1,17 @@
 "use strict";
 
 const createBtn = document.querySelector(".create-btn");
+const seePizzasBtn = document.querySelector(".see-pizzas");
+const pizzas = [];
 let newPizza;
 
 class NewPizza {
   allToppings = localStorage.getItem("toppings").split(",");
-  toppingsUsed = [];
   toppingsAvailable = this.allToppings;
-  toppingsCount = 0;
   addIngBtn;
+  toppingsAdded = 1;
+  pizzaName;
+  pizzaToppings;
 
   constructor() {
     this.generateInitialMarkup();
@@ -18,21 +21,26 @@ class NewPizza {
     const ul = `
     <ul class="new-pizza">
       <li class="new-pizza-name">
-        <span>Name: </span><input type="text" />
+        <span>Name: </span><input class="new-pizza-name-input" type="text" />
       </li>
       <li>
-        <span>Topping ${this.toppingsCount + 1}: </span>
+        <span class="topping-number">Topping 1: </span>
         <select class="new-pizza-toppings">
           <option value="none" selected disabled hidden>Choose one</option>
           ${this.generateOptions(this.allToppings)}
         </select>
+        <button class="delete-topping-btn">X</button>
       </li>
       <button class="add-ing-btn">Add</button>
+      <button class="save-pizza-btn">Save Pizza</button>
     </ul>`;
     createBtn.insertAdjacentHTML("afterend", ul);
     this.addDropDownChangeListeners();
+    this.addDeleteToppingListeners();
     this.addIngBtn = document.querySelector(".add-ing-btn");
     this.addIngBtn.addEventListener("click", this.addIngredient.bind(this));
+    const saveBtn = document.querySelector(".save-pizza-btn");
+    saveBtn.addEventListener("click", this.savePizza.bind(this));
   }
 
   generateOptions(toppings) {
@@ -62,17 +70,35 @@ class NewPizza {
   }
 
   addIngredient() {
+    if (this.toppingsAdded === this.allToppings.length) return;
     const newIngHTML = `
       <li>
-        <span>Topping ${this.toppingsCount + 1}: </span>
+        <span class="topping-number">Topping X: </span>
         <select class="new-pizza-toppings">
           <option value="none" selected disabled hidden>Choose one</option>
           ${this.generateOptions(this.toppingsAvailable)}
         </select>
+        <button class="delete-topping-btn">X</button>
       </li>
     `;
     this.addIngBtn.insertAdjacentHTML("beforebegin", newIngHTML);
     this.addDropDownChangeListeners();
+    this.addDeleteToppingListeners();
+    this.updateToppingNumbers();
+  }
+
+  updateToppingNumbers() {
+    const toppingNumbers = [...document.querySelectorAll(".topping-number")];
+    for (let i = 0; i < toppingNumbers.length; i++) {
+      toppingNumbers[i].textContent = `Topping ${i + 1}: `;
+    }
+    this.toppingsAdded = toppingNumbers.length;
+  }
+
+  deleteTopping(e) {
+    e.target.closest("li").remove();
+    this.updateToppingNumbers();
+    this.updateToppings();
   }
 
   addDropDownChangeListeners() {
@@ -80,6 +106,36 @@ class NewPizza {
     dropDowns.forEach((drop) =>
       drop.addEventListener("change", this.updateToppings.bind(this))
     );
+  }
+
+  addDeleteToppingListeners() {
+    const deleteBtns = [...document.querySelectorAll(".delete-topping-btn")];
+    deleteBtns.forEach((btn) =>
+      btn.addEventListener("click", this.deleteTopping.bind(this))
+    );
+  }
+
+  savePizza() {
+    const name = document.querySelector(".new-pizza-name-input").value;
+    if (name === "") {
+      alert("Please name the pizza!");
+      return;
+    }
+    this.pizzaName = name;
+    const toppings = [...document.querySelectorAll(".new-pizza-toppings")];
+    const toppingNames = toppings.reduce((acc, topping) => {
+      if (topping.value !== "none") acc.push(topping.value);
+      return acc;
+    }, []);
+    this.pizzaToppings = toppingNames;
+    pizzas.push(this);
+    newPizza = "";
+    this.removeUI();
+  }
+
+  removeUI() {
+    const newPizzaUI = document.querySelector(".new-pizza");
+    newPizzaUI.innerHTML = "";
   }
 }
 
@@ -89,3 +145,6 @@ const startNewPizza = function () {
 };
 
 createBtn.addEventListener("click", startNewPizza);
+seePizzasBtn.addEventListener("click", function () {
+  console.log(pizzas);
+});
