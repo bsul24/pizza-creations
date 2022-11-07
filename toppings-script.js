@@ -7,8 +7,10 @@
 class Topping {
   parentEl = document.querySelector(".toppings");
   thisEl;
+  input;
   deleteBtn;
   editBtn;
+  preEdit;
 
   constructor(topping) {
     this.topping = topping;
@@ -41,17 +43,70 @@ class Topping {
     this.editBtn.addEventListener("click", this.editTopping.bind(this));
   }
 
-  removeTopping(clear = false) {
+  removeTopping(e, clear = false) {
     this.thisEl.remove();
 
     // When removing all toppings, we don't want the deleteTopping function to be called. Instead of removing each topping one by one in the tracker, it will all be done in one action at the end of the clear.
     if (clear) return;
-
     toppingTracker.deleteTopping(this);
   }
 
   editTopping() {
-    console.log("edit");
+    if (this.thisEl.querySelector("input")) {
+      this.checkIfDuplicate();
+      return;
+    }
+    this.preEdit = this.topping;
+    this.thisEl.firstElementChild.remove();
+    const inputNode = `<input type="text" value="${this.topping}" class="topping-text" />`;
+    this.thisEl.insertAdjacentHTML("afterbegin", inputNode);
+    this.input = this.thisEl.querySelector(".topping-text");
+    this.addEditHandlers();
+  }
+
+  addEditHandlers() {
+    this.input.addEventListener("input", this.checkIfLetter.bind(this));
+    this.input.addEventListener("change", this.checkIfDuplicate.bind(this));
+    // this.input.addEventListener("blur", this.checkIfDuplicate.bind(this));
+  }
+
+  checkIfLetter(e) {
+    if (!e.data) return;
+
+    if (
+      (e.data.toUpperCase() >= "A" && e.data.toUpperCase() <= "Z") ||
+      e.data === " "
+    )
+      return;
+
+    this.input.value = this.input.value.slice(0, -1);
+  }
+
+  checkIfDuplicate() {
+    const allToppings = toppingTracker.getToppings();
+    console.log("here");
+    if (
+      allToppings.some(
+        (top) => top.toUpperCase() === this.input.value.toUpperCase()
+      ) &&
+      this.input.value.toUpperCase() !== this.topping.toUpperCase()
+    ) {
+      // alert("This topping already exists!");
+      return;
+    }
+
+    this.saveEdit();
+  }
+
+  saveEdit() {
+    if (this.thisEl.querySelector("span")) return;
+
+    this.topping = this.input.value;
+    this.input.remove();
+    this.input = "";
+    const newToppingText = `<span class="topping-text">${this.topping}</span>`;
+    this.thisEl.insertAdjacentHTML("afterbegin", newToppingText);
+    toppingTracker.updateTopping(this.preEdit, this);
   }
 }
 
@@ -98,11 +153,27 @@ class ToppingTracker {
     this.storeAllToppings();
   }
 
+  updateTopping(toppingPre, toppingNew) {
+    const toppingIndex = this.allToppings.indexOf(toppingPre);
+    const toppingClassIndex = this.allToppingClasses.findIndex(
+      (top) => top.topping === toppingPre
+    );
+    this.allToppings[toppingIndex] = toppingNew.topping;
+    this.allToppingClasses[toppingClassIndex] = toppingNew;
+    this.storeAllToppings();
+  }
+
   clearAllToppings() {
-    this.allToppingClasses?.forEach((topping) => topping.removeTopping(true));
+    this.allToppingClasses?.forEach((topping) =>
+      topping.removeTopping(true, true)
+    );
     this.allToppingClasses = [];
     this.allToppings = [];
     this.storeAllToppings();
+  }
+
+  getToppings() {
+    return this.allToppings;
   }
 }
 const toppingTracker = new ToppingTracker();

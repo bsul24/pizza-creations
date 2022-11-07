@@ -148,8 +148,10 @@ class Pizza {
   allToppings;
   toppingsLeft;
   selecters;
+  selecterDeleteBtns;
   deleteBtn;
   editBtn;
+  addBtn;
   saveBtn;
 
   constructor(pizza) {
@@ -207,16 +209,25 @@ class Pizza {
       return;
     }
     this.thisName.setHTML(`<input type="text" value="${this.name}" />`);
+    const addBtn = `<button class="edit-add-topping-btn">Add Topping</button>`;
     const saveBtn = `<button class="edit-save-btn">Save</button>`;
+    this.thisTile.insertAdjacentHTML("beforeend", addBtn);
     this.thisTile.insertAdjacentHTML("beforeend", saveBtn);
+    this.addBtn = this.thisTile.querySelector(".edit-add-topping-btn");
     this.saveBtn = this.thisTile.querySelector(".edit-save-btn");
+    this.addBtn.addEventListener("click", this.addNewTopping.bind(this));
     this.saveBtn.addEventListener("click", this.endEditMode.bind(this));
     this.setToppingChoices();
     this.thisToppings.forEach(
       (top) =>
-        (top.innerHTML = `<select class="pizza-tile-toppings-dropdown">${this.generateToppingsOptions(
-          top.textContent
-        )}</select>`)
+        (top.innerHTML = `
+          <div class="dropdown-row">
+            <select class="pizza-tile-toppings-dropdown">
+              ${this.generateToppingsOptions(top.textContent)}
+            </select>
+            <button class="delete-select-topping">X</button>
+          </div>
+        `)
     );
     this.addSelectHandlers();
   }
@@ -251,11 +262,16 @@ class Pizza {
     this.selecters.forEach((sel) =>
       sel.addEventListener("change", this.updateToppingsOptions.bind(this))
     );
+    this.selecterDeleteBtns = [
+      ...this.thisTile.querySelectorAll(".delete-select-topping"),
+    ];
+    this.selecterDeleteBtns.forEach((btn) =>
+      btn.addEventListener("click", this.deleteTopping.bind(this))
+    );
   }
 
   updateToppingsOptions() {
     this.setToppingChoices(true);
-    console.log(this.selecters);
     this.selecters.forEach(
       (sel) =>
         (sel.innerHTML = `
@@ -267,15 +283,42 @@ class Pizza {
     );
   }
 
+  addNewTopping() {
+    this.setToppingChoices(true);
+    if (this.thisToppings.length >= this.allToppings.length) return;
+
+    const newTopping = `
+      <select class="pizza-tile-toppings-dropdown">
+        ${this.generateToppingsOptions()}
+      </select>
+  `;
+    this.toppingsList.insertAdjacentHTML("beforeend", newTopping);
+    this.addSelectHandlers();
+  }
+
+  deleteTopping(e) {
+    const toppingRow = e.target.closest(".dropdown-row");
+    toppingRow.remove();
+    this.addSelectHandlers();
+    this.updateToppingsOptions();
+  }
+
   endEditMode() {
     this.name = this.thisTile.querySelector("input").value;
     this.thisName.setHTML(`<h2 class="pizza-name">${this.name}</h2>`);
     this.saveBtn.remove();
     this.saveBtn = "";
+    this.addBtn.remove();
+    this.addBtn = "";
     this.toppingsList.innerHTML = this.selecters.reduce(
       (acc, sel) => acc + `<li class="toppings-list-topping">${sel.value}</li>`,
       ``
     );
+    this.thisToppings = [
+      ...this.thisTile.querySelectorAll(".toppings-list-topping"),
+    ];
+    this.toppings = this.thisToppings.map((topping) => topping.textContent);
+    pizzaTracker.updatePizza(this);
     // this.selecters.forEach(
     //   (sel) =>
     //     (sel.innerHTML = `<li class="toppings-list-topping">${sel.value}</li>`)
@@ -328,6 +371,14 @@ class PizzaTracker {
       return false;
     }
     return true;
+  }
+
+  updatePizza(pizza) {
+    const pizzaIndex = this.allPizzas.indexOf(pizza);
+    console.log(pizzaIndex);
+    this.allPizzas[pizzaIndex] = pizza;
+    console.log(this.allPizzas);
+    this.storePizzas();
   }
 
   deletePizza(pizza) {
