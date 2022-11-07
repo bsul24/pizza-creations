@@ -49,6 +49,7 @@ class Topping {
 
     toppingTracker.deleteTopping(this);
   }
+
   editTopping() {
     console.log("edit");
   }

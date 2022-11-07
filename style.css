@@ -68,7 +68,6 @@ input {
 
 .new-pizza-container {
   margin: 24px 0;
-  height: 64px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -96,6 +95,12 @@ input {
   border-radius: 9px;
 }
 
+.pizza-tile-btns {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
 .pizza-name {
   font-size: 30px;
   margin-bottom: 12px;
@@ -111,6 +116,9 @@ input {
 }
 
 .pizza-tile-edit-btn {
-  align-self: flex-end;
   border-top-right-radius: 9px;
+}
+
+.pizza-tile-delete-btn {
+  border-top-left-radius: 9px;
 }
