@@ -41,8 +41,12 @@ class Topping {
     this.editBtn.addEventListener("click", this.editTopping.bind(this));
   }
 
-  removeTopping() {
+  removeTopping(clear = false) {
     this.thisEl.remove();
+
+    // When removing all toppings, we don't want the deleteTopping function to be called. Instead of removing each topping one by one in the tracker, it will all be done in one action at the end of the clear.
+    if (clear) return;
+
     toppingTracker.deleteTopping(this);
   }
   editTopping() {
@@ -94,7 +98,10 @@ class ToppingTracker {
   }
 
   clearAllToppings() {
-    this.allToppingClasses?.forEach((topping) => topping.removeTopping());
+    this.allToppingClasses?.forEach((topping) => topping.removeTopping(true));
+    this.allToppingClasses = [];
+    this.allToppings = [];
+    this.storeAllToppings();
   }
 }
 const toppingTracker = new ToppingTracker();
@@ -127,7 +134,7 @@ class ToppingController {
     )
       return;
 
-    input.value = input.value.slice(0, -1);
+    this.input.value = this.input.value.slice(0, -1);
   }
 
   addNewTopping(e) {
