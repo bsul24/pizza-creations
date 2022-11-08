@@ -44,6 +44,17 @@ button {
   padding: 0 24px;
 }
 
+.main-container {
+  color: #fff;
+  max-width: 400px;
+  margin: 96px auto;
+  text-align: center;
+}
+
+.main-container h1 {
+  font-size: 52px;
+}
+
 .toppings-header {
   color: #fff;
   text-align: center;
