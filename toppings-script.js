@@ -71,7 +71,6 @@ class Topping {
   addEditHandlers() {
     this.input.addEventListener("input", this.checkIfLetter.bind(this));
     this.input.addEventListener("change", this.checkIfDuplicate.bind(this));
-    // this.input.addEventListener("blur", this.checkIfDuplicate.bind(this));
   }
 
   checkIfLetter(e) {
@@ -94,7 +93,6 @@ class Topping {
       ) &&
       this.input.value.toUpperCase() !== this.topping.toUpperCase()
     ) {
-      // alert("This topping already exists!");
       return;
     }
 
@@ -266,40 +264,3 @@ class ToppingController {
   }
 }
 const toppingController = new ToppingController();
-
-const editTopping = function (e) {
-  const item = e.target.closest("li");
-  if (item.querySelector("input")) {
-    saveToppingEdit(item.querySelector("input"));
-    return;
-  }
-  item.firstElementChild.classList.toggle("hidden");
-  const topping = item.querySelector("span").textContent;
-  const toppingEditor = `<input type="text" value="${topping}" class="topping-text" />`;
-  item.insertAdjacentHTML("afterbegin", toppingEditor);
-  const toppingInput = item.firstElementChild;
-  toppingInput.setSelectionRange(topping.length, topping.length);
-  toppingInput.focus();
-  toppingInput.addEventListener("change", saveToppingEdit);
-  toppingInput.addEventListener("blur", saveToppingEdit);
-  // const editBtn = e.target;
-  // editBtn.removeEventListener("click", editTopping);
-  // editBtn.addEventListener("click", saveToppingEdit);
-};
-
-const saveToppingEdit = function (e) {
-  // const editBtn = e.target.closest("li").querySelector(".edit-btn");
-  // editBtn.removeEventListener("click", saveToppingEdit);
-  // editBtn.addEventListener("click", editTopping);
-  // // let toppingInput;
-  // if (e.target.nodeName === "BUTTON") {
-  //   toppingInput = e.target.closest("li").querySelector("input");
-  // } else {
-  const toppingInput = e.target;
-  // }
-  const toppingText = document.querySelector(".hidden");
-  if (!toppingText) return;
-  toppingText.textContent = toppingInput.value;
-  toppingText.classList.toggle("hidden");
-  toppingInput.remove();
-};

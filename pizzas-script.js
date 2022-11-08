@@ -353,7 +353,6 @@ class Pizza {
 
   endEditMode() {
     this.name = this.thisTile.querySelector("input").value;
-    // this.thisName.setHTML(`<h2 class="pizza-name">${this.name}</h2>`);
     this.thisName.textContent = this.name;
     this.saveBtn.remove();
     this.saveBtn = "";
@@ -368,10 +367,6 @@ class Pizza {
     ];
     this.toppings = this.thisToppings.map((topping) => topping.textContent);
     pizzaTracker.updatePizza(this);
-    // this.selecters.forEach(
-    //   (sel) =>
-    //     (sel.innerHTML = `<li class="toppings-list-topping">${sel.value}</li>`)
-    // );
   }
 
   removePizzaPopup() {
