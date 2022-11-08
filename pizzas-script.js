@@ -15,6 +15,7 @@ class NewPizza {
   toppingsAdded = 1;
   name;
   toppings;
+  input;
 
   constructor() {
     this.generateInitialMarkup();
@@ -50,6 +51,8 @@ class NewPizza {
     this.addIngBtn = document.querySelector(".add-ing-btn");
     this.addIngBtn.addEventListener("click", this.addIngredient.bind(this));
     const saveBtn = document.querySelector(".save-pizza-btn");
+    this.input = document.querySelector(".new-pizza-name-input");
+    this.input.addEventListener("input", this.checkIfAllowed.bind(this));
     saveBtn.addEventListener("click", this.savePizza.bind(this));
   }
 
@@ -125,6 +128,20 @@ class NewPizza {
     );
   }
 
+  checkIfAllowed(e) {
+    if (!e.data) return;
+
+    if (
+      (e.data.toUpperCase() >= "A" && e.data.toUpperCase() <= "Z") ||
+      e.data === " " ||
+      Number(e.data) ||
+      e.data === "'"
+    )
+      return;
+
+    this.input.value = this.input.value.slice(0, -1);
+  }
+
   savePizza() {
     const name = document.querySelector(".new-pizza-name-input").value;
     if (name === "") {
@@ -164,6 +181,7 @@ class Pizza {
   editBtn;
   addBtn;
   saveBtn;
+  input;
 
   constructor(pizza) {
     this.name = pizza.name;
@@ -224,8 +242,10 @@ class Pizza {
     const saveBtn = `<button class="edit-save-btn">Save Pizza</button>`;
     this.thisTile.insertAdjacentHTML("beforeend", addBtn);
     this.thisTile.insertAdjacentHTML("beforeend", saveBtn);
+    this.input = this.thisTile.querySelector(".pizza-name-edit");
     this.addBtn = this.thisTile.querySelector(".edit-add-topping-btn");
     this.saveBtn = this.thisTile.querySelector(".edit-save-btn");
+    this.input.addEventListener("input", this.checkIfAllowed.bind(this));
     this.addBtn.addEventListener("click", this.addNewTopping.bind(this));
     this.saveBtn.addEventListener("click", this.endEditMode.bind(this));
     this.setToppingChoices();
@@ -315,6 +335,20 @@ class Pizza {
     toppingRow.remove();
     this.addSelectHandlers();
     this.updateToppingsOptions();
+  }
+
+  checkIfAllowed(e) {
+    if (!e.data) return;
+
+    if (
+      (e.data.toUpperCase() >= "A" && e.data.toUpperCase() <= "Z") ||
+      e.data === " " ||
+      Number(e.data) ||
+      e.data === "'"
+    )
+      return;
+
+    this.input.value = this.input.value.slice(0, -1);
   }
 
   endEditMode() {
