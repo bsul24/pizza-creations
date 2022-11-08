@@ -3,6 +3,7 @@
 const createBtn = document.querySelector(".create-btn");
 const newPizzaContainer = document.querySelector(".new-pizza-container");
 const pizzaTiles = document.querySelector(".pizza-tiles");
+const overlay = document.querySelector(".overlay");
 const pizzas = [];
 let newPizza;
 
@@ -10,6 +11,7 @@ class NewPizza {
   allToppings = localStorage.getItem("toppings").split(",");
   toppingsAvailable = this.allToppings;
   addIngBtn;
+  closeBtn;
   toppingsAdded = 1;
   name;
   toppings;
@@ -20,24 +22,31 @@ class NewPizza {
 
   generateInitialMarkup() {
     const ul = `
-    <ul class="new-pizza">
-      <button on class="save-pizza-btn">Save Pizza</button>
-      <li class="new-pizza-name">
-        <span>Name: </span><input class="new-pizza-name-input" type="text" />
-      </li>
-      <li>
-        <span class="topping-number">Topping 1: </span>
-        <select class="new-pizza-toppings">
+      <section class="modal">
+        <ul class="new-pizza">
+          <button class="close-new-pizza-btn">X</button>
+          <li class="new-pizza-name">
+          <span>Name: </span><input class="new-pizza-name-input" type="text" />
+          </li>
+          <li>
+          <span class="topping-number">Topping 1: </span>
+          <select class="new-pizza-toppings">
           <option value="none" selected disabled hidden>Choose one</option>
           ${this.generateOptions(this.allToppings)}
-        </select>
-        <button class="delete-topping-btn">X</button>
-      </li>
-      <button class="add-ing-btn">Add</button>
-    </ul>`;
+          </select>
+          <button class="delete-topping-btn">X</button>
+          </li>
+          <button class="add-ing-btn">Add</button>
+          <button class="save-pizza-btn">Save Pizza</button>
+        </ul>
+      </section>
+      `;
+    overlay.classList.remove("hidden");
     newPizzaContainer.insertAdjacentHTML("afterbegin", ul);
     this.addDropDownChangeHandlers();
     this.addDeleteToppingHandlers();
+    this.closeBtn = document.querySelector(".close-new-pizza-btn");
+    this.closeBtn.addEventListener("click", this.removeUI.bind(this));
     this.addIngBtn = document.querySelector(".add-ing-btn");
     this.addIngBtn.addEventListener("click", this.addIngredient.bind(this));
     const saveBtn = document.querySelector(".save-pizza-btn");
@@ -129,14 +138,16 @@ class NewPizza {
       return acc;
     }, []);
     this.toppings = toppingNames;
-    newPizza = "";
+
     pizzaTracker.createPizza(this);
     this.removeUI();
   }
 
   removeUI() {
-    const newPizzaUI = document.querySelector(".new-pizza");
+    const newPizzaUI = document.querySelector(".modal");
     newPizzaUI.remove();
+    overlay.classList.add("hidden");
+    newPizza = "";
   }
 }
 
@@ -189,7 +200,7 @@ class Pizza {
 
   addBtnHandlers() {
     this.editBtn.addEventListener("click", this.startEditMode.bind(this));
-    this.deleteBtn.addEventListener("click", this.removePizza.bind(this));
+    this.deleteBtn.addEventListener("click", this.removePizzaPopup.bind(this));
   }
 
   storeDOM() {
@@ -208,9 +219,11 @@ class Pizza {
       this.endEditMode();
       return;
     }
-    this.thisName.setHTML(`<input type="text" value="${this.name}" />`);
+    this.thisName.setHTML(
+      `<input class="pizza-name-edit" type="text" value="${this.name}" />`
+    );
     const addBtn = `<button class="edit-add-topping-btn">Add Topping</button>`;
-    const saveBtn = `<button class="edit-save-btn">Save</button>`;
+    const saveBtn = `<button class="edit-save-btn">Save Pizza</button>`;
     this.thisTile.insertAdjacentHTML("beforeend", addBtn);
     this.thisTile.insertAdjacentHTML("beforeend", saveBtn);
     this.addBtn = this.thisTile.querySelector(".edit-add-topping-btn");
@@ -288,9 +301,12 @@ class Pizza {
     if (this.thisToppings.length >= this.allToppings.length) return;
 
     const newTopping = `
+    <div class="dropdown-row">
       <select class="pizza-tile-toppings-dropdown">
         ${this.generateToppingsOptions()}
       </select>
+      <button class="delete-select-topping">X</button>
+  </div>
   `;
     this.toppingsList.insertAdjacentHTML("beforeend", newTopping);
     this.addSelectHandlers();
@@ -305,7 +321,8 @@ class Pizza {
 
   endEditMode() {
     this.name = this.thisTile.querySelector("input").value;
-    this.thisName.setHTML(`<h2 class="pizza-name">${this.name}</h2>`);
+    // this.thisName.setHTML(`<h2 class="pizza-name">${this.name}</h2>`);
+    this.thisName.textContent = this.name;
     this.saveBtn.remove();
     this.saveBtn = "";
     this.addBtn.remove();
@@ -325,7 +342,32 @@ class Pizza {
     // );
   }
 
+  removePizzaPopup() {
+    const popup = `
+      <div class="modal remove-pizza-popup">
+        <p>Are you sure you want to delete this pizza?</p>
+        <div class="popup-btns">
+          <button class="yes">Yes</button>
+          <button class="cancel">Cancel</button>
+        </div>
+      </div>
+    `;
+    newPizzaContainer.insertAdjacentHTML("afterbegin", popup);
+    overlay.classList.remove("hidden");
+    const yesBtn = document.querySelector(".yes");
+    const cancelBtn = document.querySelector(".cancel");
+    yesBtn.addEventListener("click", this.removePizza.bind(this));
+    cancelBtn.addEventListener("click", this.endPopup.bind(this));
+  }
+
+  endPopup() {
+    const popup = document.querySelector(".remove-pizza-popup");
+    popup.remove();
+    overlay.classList.add("hidden");
+  }
+
   removePizza() {
+    this.endPopup();
     this.thisTile.remove();
     pizzaTracker.deletePizza(this);
   }
@@ -367,7 +409,7 @@ class PizzaTracker {
           JSON.stringify(piz.toppings) === JSON.stringify(pizza.toppings.sort())
       )
     ) {
-      alert("There is already a pizza with all of these toppings!");
+      alert("There is already a pizza with these toppings!");
       return false;
     }
     return true;
@@ -375,15 +417,14 @@ class PizzaTracker {
 
   updatePizza(pizza) {
     const pizzaIndex = this.allPizzas.indexOf(pizza);
-    console.log(pizzaIndex);
     this.allPizzas[pizzaIndex] = pizza;
-    console.log(this.allPizzas);
     this.storePizzas();
   }
 
   deletePizza(pizza) {
     const pizzaIndex = this.allPizzas.indexOf(pizza);
     this.allPizzas.splice(pizzaIndex, 1);
+    this.storePizzas();
   }
 }
 const pizzaTracker = new PizzaTracker();

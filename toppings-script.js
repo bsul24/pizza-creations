@@ -61,6 +61,8 @@ class Topping {
     const inputNode = `<input type="text" value="${this.topping}" class="topping-text" />`;
     this.thisEl.insertAdjacentHTML("afterbegin", inputNode);
     this.input = this.thisEl.querySelector(".topping-text");
+    this.input.setSelectionRange(this.topping.length, this.topping.length);
+    this.input.focus();
     this.addEditHandlers();
   }
 
@@ -84,7 +86,6 @@ class Topping {
 
   checkIfDuplicate() {
     const allToppings = toppingTracker.getToppings();
-    console.log("here");
     if (
       allToppings.some(
         (top) => top.toUpperCase() === this.input.value.toUpperCase()
@@ -229,7 +230,6 @@ const toppingController = new ToppingController();
 const editTopping = function (e) {
   const item = e.target.closest("li");
   if (item.querySelector("input")) {
-    console.log("here");
     saveToppingEdit(item.querySelector("input"));
     return;
   }
