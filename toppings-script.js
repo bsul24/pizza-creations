@@ -1,5 +1,7 @@
 "use strict";
 
+const overlay = document.querySelector(".overlay");
+
 /****************
  *** Classes **
  ****************/
@@ -164,7 +166,34 @@ class ToppingTracker {
     this.storeAllToppings();
   }
 
+  clearToppingsPopup() {
+    const popup = `
+      <div class="modal clear-toppings-popup">
+        <p>Are you sure you want to clear all toppings?</p>
+        <div class="popup-btns">
+          <button class="yes">Yes</button>
+          <button class="cancel">Cancel</button>
+        </div>
+      </div>
+    `;
+    document
+      .querySelector(".toppings-header")
+      .insertAdjacentHTML("afterbegin", popup);
+    overlay.classList.remove("hidden");
+    const yesBtn = document.querySelector(".yes");
+    const cancelBtn = document.querySelector(".cancel");
+    yesBtn.addEventListener("click", this.clearAllToppings.bind(this));
+    cancelBtn.addEventListener("click", this.endPopup.bind(this));
+  }
+
+  endPopup() {
+    const popup = document.querySelector(".clear-toppings-popup");
+    popup.remove();
+    overlay.classList.add("hidden");
+  }
+
   clearAllToppings() {
+    this.endPopup();
     this.allToppingClasses?.forEach((topping) =>
       topping.removeTopping(true, true)
     );
@@ -217,7 +246,7 @@ class ToppingController {
   }
 
   clearToppings() {
-    toppingTracker.clearAllToppings();
+    toppingTracker.clearToppingsPopup();
   }
 
   clearForm() {
