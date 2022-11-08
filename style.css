@@ -10,16 +10,28 @@
   padding: 0;
 }
 
+body {
+  position: relative;
+  min-height: 100vh;
+  background-image: url(./images/pizza-bg.webp);
+  background-size: cover;
+}
+
 body,
-input {
+input,
+button {
   font-family: "Inter", sans-serif;
   color: #343a40;
-  background-color: #ffa8a8;
 }
 
 span,
 input {
   max-width: 180px;
+}
+
+button {
+  cursor: pointer;
+  font-size: 16px;
 }
 
 .container {
@@ -28,18 +40,50 @@ input {
   justify-content: center;
   align-items: center;
   max-width: 600px;
-  margin: 96px auto 0;
+  margin: 80px auto 0;
   padding: 0 24px;
+}
+
+.toppings-header {
+  color: #fff;
+  text-align: center;
+  font-size: 36px;
+  margin-bottom: 24px;
+}
+
+#add-topping {
+  font-size: 24px;
+  padding: 8px 4px;
+  max-width: 250px;
+  margin-bottom: 24px;
 }
 
 .toppings {
   list-style: none;
   width: 100%;
-  background-color: #c92a2a;
+  background-color: #a12222;
   border-radius: 9px;
   color: #fff;
   font-size: 24px;
   font-weight: 600;
+  padding-top: 16px;
+}
+
+.clear-toppings {
+  background-color: #1864ab;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 9px;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+}
+
+.clear-toppings:hover {
+  background-color: #135089;
+  transform: scale(1.05);
 }
 
 .topping {
@@ -59,4 +103,237 @@ input {
 
 .hidden {
   display: none;
+}
+
+.create-btn {
+  background-color: #226e32;
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  display: block;
+  margin: 48px auto 0;
+  padding: 16px 32px;
+  border: none;
+  border-radius: 9px;
+  transition: all 0.2s;
+}
+
+.create-btn:hover {
+  background-color: #1e612b;
+  transform: scale(1.05);
+}
+
+.new-pizza-container {
+  margin: 24px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.new-pizza {
+  list-style: none;
+}
+
+.modal {
+  font-size: 20px;
+  position: absolute;
+  top: 40%;
+  background-color: #fff;
+  width: 350px;
+  padding: 40px;
+  z-index: 10;
+  border-radius: 9px;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+  z-index: 1;
+}
+
+.pizza-tiles {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  max-width: 600px;
+}
+
+.pizza-tile {
+  position: relative;
+  background-color: #a12222;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 12px 24px;
+  padding: 0 80px 16px;
+  border: 3px solid #fff;
+  border-radius: 9px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.pizza-tile-btns {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pizza-tile-btns button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+}
+
+.close-new-pizza-btn {
+  align-self: flex-end;
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  padding: 3px;
+}
+
+.pizza-name {
+  text-align: center;
+  background-color: #791919;
+  font-size: 44px;
+  margin-bottom: 24px;
+  margin-top: 36px;
+  padding: 8px 24px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  border-radius: 7px;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.pizza-name-edit {
+  font-size: 36px;
+  max-width: 350px;
+  padding: 8px 6px;
+}
+
+.pizza-toppings {
+  font-size: 30px;
+  align-self: flex-start;
+  margin-bottom: 16px;
+  text-decoration: underline;
+}
+
+.toppings-list {
+  font-size: 20px;
+  list-style: none;
+  align-self: flex-start;
+}
+
+.pizza-tile-toppings-dropdown {
+  margin-bottom: 12px;
+}
+
+.edit-add-topping-btn {
+  align-self: flex-start;
+}
+
+.edit-add-topping-btn,
+.edit-save-btn,
+.link-btn,
+.add-submit-btn {
+  margin-top: 12px;
+  background-color: #226e32;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 9px;
+  transition: all 0.2s;
+}
+
+.edit-add-topping-btn:hover,
+.edit-save-btn:hover,
+.link-btn:hover,
+.add-submit-btn:hover {
+  background-color: #1e612b;
+  transform: scale(1.05);
+}
+
+.link-btn {
+  display: inline-block;
+  margin: 16px 0 0 16px;
+  text-decoration: none;
+}
+
+.delete-select-topping {
+  width: 18px;
+  height: 18px;
+}
+
+.save-pizza-btn {
+  cursor: pointer;
+  background-color: #37b24d;
+  color: #fff;
+  font-weight: bold;
+  position: absolute;
+  bottom: 10px;
+  left: 100px;
+  right: 100px;
+  padding: 6px 0;
+  border: none;
+  border-radius: 9px;
+}
+
+.save-pizza-btn:hover {
+  background-color: #2b8a3e;
+}
+
+.pizza-tile-edit-btn {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+}
+
+.pizza-tile-delete-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.remove-pizza-popup p {
+  margin-bottom: 16px;
+}
+
+.popup-btns {
+  display: flex;
+  margin: 0 auto;
+  justify-content: space-around;
+}
+
+.popup-btns button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 9px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.popup-btns .yes {
+  background-color: #37b24d;
+}
+
+.popup-btns .cancel {
+  background-color: #a12222;
+}
+
+@media (max-width: 500px) {
+  .pizza-name-edit {
+    max-width: 150px;
+  }
 }

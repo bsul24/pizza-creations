@@ -15,52 +15,22 @@
     <title>Pizza Creations</title>
   </head>
   <body>
-    <a href="./pizzas.html">Pizzas</a>
+    <a class="link-btn" href="./pizzas.html">Pizzas</a>
     <div class="container">
-      <div class="buttons">
-        <button class="add-btn">Add Topping</button>
-      </div>
+      <h2 class="toppings-header">
+        Adjust toppings below to use in building new pizzas!
+      </h2>
       <form class="topping-form">
-        <input type="text" name="add-topping" id="add-topping" />
+        <input
+          type="text"
+          name="add-topping"
+          id="add-topping"
+          placeholder="Topping"
+        />
         <button class="add-submit-btn" type="submit">Add</button>
       </form>
-      <ul class="toppings">
-        <li class="topping">
-          <span class="topping-text">Pepperoni</span>
-          <div class="topping-btns">
-            <button class="delete-btn">X</button>
-            <button class="edit-btn">✏️</button>
-          </div>
-        </li>
-        <li class="topping">
-          <span class="topping-text">Sausage</span>
-          <div class="topping-btns">
-            <button class="delete-btn">X</button>
-            <button class="edit-btn">✏️</button>
-          </div>
-        </li>
-        <li class="topping">
-          <span class="topping-text">Mushroom</span>
-          <div class="topping-btns">
-            <button class="delete-btn">X</button>
-            <button class="edit-btn">✏️</button>
-          </div>
-        </li>
-        <li class="topping">
-          <span class="topping-text">Onion</span>
-          <div class="topping-btns">
-            <button class="delete-btn">X</button>
-            <button class="edit-btn">✏️</button>
-          </div>
-        </li>
-        <li class="topping">
-          <span class="topping-text">Green Pepper</span>
-          <div class="topping-btns">
-            <button class="delete-btn">X</button>
-            <button class="edit-btn">✏️</button>
-          </div>
-        </li>
-      </ul>
+      <button class="clear-toppings">Clear all</button>
+      <ul class="toppings"></ul>
     </div>
     <script type="module" src="./toppings-script.js"></script>
   </body>

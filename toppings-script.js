@@ -1,97 +1,235 @@
 "use strict";
 
-/**********
- *** DOM **
- **********/
-
-const addBtn = document.querySelector(".add-btn");
-const toppingInput = document.querySelector("#add-topping");
-const addSubmitBtn = document.querySelector(".add-submit-btn");
-const toppingForm = document.querySelector(".topping-form");
-const toppingsList = document.querySelector(".toppings");
-const toppingsListItems = [...document.querySelectorAll(".topping")];
-const deleteBtns = [...document.querySelectorAll(".delete-btn")];
-const editBtns = [...document.querySelectorAll(".edit-btn")];
-
-/***********
- ** State **
- ***********/
-const allToppings = new Set();
-toppingsListItems.forEach((item) => {
-  const topping = item.querySelector("span").textContent;
-  allToppings.add(topping.toUpperCase());
-});
-
 /****************
- *** Functions **
+ *** Classes **
  ****************/
 
-const storeAllToppings = function () {
-  localStorage.setItem("toppings", [...allToppings]);
-  console.log(localStorage);
-};
-storeAllToppings();
+class Topping {
+  parentEl = document.querySelector(".toppings");
+  thisEl;
+  input;
+  deleteBtn;
+  editBtn;
+  preEdit;
 
-// Only allow letters to be typed by calling this function every time something is typed into the input area
-const checkIfLetter = function (e) {
-  if (!e.data) return;
-
-  if (
-    (e.data.toUpperCase() >= "A" && e.data.toUpperCase() <= "Z") ||
-    e.data === " "
-  )
-    return;
-
-  toppingInput.value = toppingInput.value.slice(0, -1);
-};
-
-// Loop over all list items and see if the topping already exists. Do a case insensitive check
-const checkIfDuplicate = function (topping) {
-  return allToppings.has(topping.toUpperCase());
-};
-
-const addTopping = function (e) {
-  e.preventDefault();
-  const topping = toppingInput.value;
-  if (!topping) return;
-  if (checkIfDuplicate(topping)) {
-    toppingInput.value = "";
-    toppingInput.blur();
-    return;
+  constructor(topping) {
+    this.topping = topping;
+    this.renderTopping();
   }
-  allToppings.add(topping.toUpperCase());
-  storeAllToppings();
-  const html = `
-  <li class="topping">
-    <span class="topping-text">${topping}</span>
-    <div class="topping-btns">
-      <button class="delete-btn">X</button>
-      <button class="edit-btn">✏️</button>
-    </div>
-  </li>
-  `;
-  toppingsList.insertAdjacentHTML("beforeend", html);
-  /* 
-  Check console, there is an error coming from here
-  */
-  toppingsList
-    .querySelector("li:last-child .delete-btn")
-    .addEventListener("click", deleteTopping);
-  toppingsList
-    .querySelector("li:last-child .edit-btn")
-    .addEventListener("click", editTopping);
-  toppingInput.value = "";
-  toppingInput.blur();
-};
 
-const deleteTopping = function (e) {
-  e.target.closest("li").remove();
-};
+  renderTopping() {
+    const html = `
+      <li class="topping">
+        <span class="topping-text">${this.topping}</span>
+        <div class="topping-btns">
+          <button class="delete-btn">X</button>
+          <button class="edit-btn">✏️</button>
+        </div>
+      </li>
+  `;
+    this.parentEl.insertAdjacentHTML("beforeend", html);
+    this.setDOMElements();
+    this.addButtonHandlers();
+  }
+
+  setDOMElements() {
+    this.thisEl = this.parentEl.querySelector("li:last-child");
+    this.deleteBtn = this.thisEl.querySelector(".delete-btn");
+    this.editBtn = this.thisEl.querySelector(".edit-btn");
+  }
+
+  addButtonHandlers() {
+    this.deleteBtn.addEventListener("click", this.removeTopping.bind(this));
+    this.editBtn.addEventListener("click", this.editTopping.bind(this));
+  }
+
+  removeTopping(e, clear = false) {
+    this.thisEl.remove();
+
+    // When removing all toppings, we don't want the deleteTopping function to be called. Instead of removing each topping one by one in the tracker, it will all be done in one action at the end of the clear.
+    if (clear) return;
+    toppingTracker.deleteTopping(this);
+  }
+
+  editTopping() {
+    if (this.thisEl.querySelector("input")) {
+      this.checkIfDuplicate();
+      return;
+    }
+    this.preEdit = this.topping;
+    this.thisEl.firstElementChild.remove();
+    const inputNode = `<input type="text" value="${this.topping}" class="topping-text" />`;
+    this.thisEl.insertAdjacentHTML("afterbegin", inputNode);
+    this.input = this.thisEl.querySelector(".topping-text");
+    this.input.setSelectionRange(this.topping.length, this.topping.length);
+    this.input.focus();
+    this.addEditHandlers();
+  }
+
+  addEditHandlers() {
+    this.input.addEventListener("input", this.checkIfLetter.bind(this));
+    this.input.addEventListener("change", this.checkIfDuplicate.bind(this));
+    // this.input.addEventListener("blur", this.checkIfDuplicate.bind(this));
+  }
+
+  checkIfLetter(e) {
+    if (!e.data) return;
+
+    if (
+      (e.data.toUpperCase() >= "A" && e.data.toUpperCase() <= "Z") ||
+      e.data === " "
+    )
+      return;
+
+    this.input.value = this.input.value.slice(0, -1);
+  }
+
+  checkIfDuplicate() {
+    const allToppings = toppingTracker.getToppings();
+    if (
+      allToppings.some(
+        (top) => top.toUpperCase() === this.input.value.toUpperCase()
+      ) &&
+      this.input.value.toUpperCase() !== this.topping.toUpperCase()
+    ) {
+      // alert("This topping already exists!");
+      return;
+    }
+
+    this.saveEdit();
+  }
+
+  saveEdit() {
+    if (this.thisEl.querySelector("span")) return;
+
+    this.topping = this.input.value;
+    this.input.remove();
+    this.input = "";
+    const newToppingText = `<span class="topping-text">${this.topping}</span>`;
+    this.thisEl.insertAdjacentHTML("afterbegin", newToppingText);
+    toppingTracker.updateTopping(this.preEdit, this);
+  }
+}
+
+class ToppingTracker {
+  allToppingClasses = [];
+  allToppings = [];
+
+  constructor() {
+    this.setAllToppings();
+  }
+
+  setAllToppings() {
+    if (!localStorage.getItem("toppings")) return;
+    const toppings = localStorage.getItem("toppings").split(",");
+    toppings.forEach((top) => this.createTopping(top));
+  }
+
+  storeAllToppings() {
+    localStorage.setItem("toppings", this.allToppings);
+  }
+
+  createTopping(topping) {
+    if (this.checkIfDuplicate(topping)) {
+      alert("This topping already exists!");
+      return;
+    }
+    const toppingClass = new Topping(topping);
+    this.allToppingClasses.push(toppingClass);
+    this.allToppings.push(topping);
+    this.storeAllToppings();
+  }
+
+  checkIfDuplicate(topping) {
+    return this.allToppingClasses.some(
+      (top) => top.topping.toUpperCase() === topping.toUpperCase()
+    );
+  }
+
+  deleteTopping(topping) {
+    const toppingIndex = this.allToppings.indexOf(topping.topping);
+    const toppingClassIndex = this.allToppingClasses.indexOf(topping);
+    this.allToppings.splice(toppingIndex, 1);
+    this.allToppingClasses.splice(toppingClassIndex, 1);
+    this.storeAllToppings();
+  }
+
+  updateTopping(toppingPre, toppingNew) {
+    const toppingIndex = this.allToppings.indexOf(toppingPre);
+    const toppingClassIndex = this.allToppingClasses.findIndex(
+      (top) => top.topping === toppingPre
+    );
+    this.allToppings[toppingIndex] = toppingNew.topping;
+    this.allToppingClasses[toppingClassIndex] = toppingNew;
+    this.storeAllToppings();
+  }
+
+  clearAllToppings() {
+    this.allToppingClasses?.forEach((topping) =>
+      topping.removeTopping(true, true)
+    );
+    this.allToppingClasses = [];
+    this.allToppings = [];
+    this.storeAllToppings();
+  }
+
+  getToppings() {
+    return this.allToppings;
+  }
+}
+const toppingTracker = new ToppingTracker();
+
+class ToppingController {
+  input = document.querySelector("#add-topping");
+  addToppingBtn = document.querySelector(".add-submit-btn");
+  form = document.querySelector(".topping-form");
+  clearToppingsBtn = document.querySelector(".clear-toppings");
+
+  constructor() {
+    this.addControllerHandlers();
+  }
+
+  addControllerHandlers() {
+    this.input.addEventListener("input", this.checkIfLetter.bind(this));
+    this.form.addEventListener("submit", this.addNewTopping.bind(this));
+    this.clearToppingsBtn.addEventListener(
+      "click",
+      this.clearToppings.bind(this)
+    );
+  }
+
+  checkIfLetter(e) {
+    if (!e.data) return;
+
+    if (
+      (e.data.toUpperCase() >= "A" && e.data.toUpperCase() <= "Z") ||
+      e.data === " "
+    )
+      return;
+
+    this.input.value = this.input.value.slice(0, -1);
+  }
+
+  addNewTopping(e) {
+    e.preventDefault();
+    toppingTracker.createTopping(this.input.value);
+    this.clearForm();
+  }
+
+  clearToppings() {
+    toppingTracker.clearAllToppings();
+  }
+
+  clearForm() {
+    this.input.value = "";
+    this.input.blur();
+  }
+}
+const toppingController = new ToppingController();
 
 const editTopping = function (e) {
   const item = e.target.closest("li");
   if (item.querySelector("input")) {
-    console.log("here");
     saveToppingEdit(item.querySelector("input"));
     return;
   }
@@ -125,12 +263,3 @@ const saveToppingEdit = function (e) {
   toppingText.classList.toggle("hidden");
   toppingInput.remove();
 };
-
-/**********************
- *** Event Listeners **
- **********************/
-
-toppingInput.addEventListener("input", checkIfLetter);
-toppingForm.addEventListener("submit", addTopping);
-deleteBtns.forEach((btn) => btn.addEventListener("click", deleteTopping));
-editBtns.forEach((btn) => btn.addEventListener("click", editTopping));
