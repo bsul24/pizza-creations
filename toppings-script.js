@@ -104,6 +104,11 @@ class Topping {
   saveEdit() {
     if (this.thisEl.querySelector("span")) return;
 
+    if (this.input.value === "") {
+      alert("Please enter topping name");
+      return;
+    }
+
     this.topping = this.input.value;
     this.input.remove();
     this.input = "";
@@ -136,6 +141,12 @@ class ToppingTracker {
       alert("This topping already exists!");
       return;
     }
+
+    if (topping === "") {
+      alert("Please enter topping name");
+      return;
+    }
+
     const toppingClass = new Topping(topping);
     this.allToppingClasses.push(toppingClass);
     this.allToppings.push(topping);
