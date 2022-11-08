@@ -215,6 +215,7 @@ class Pizza {
   }
 
   startEditMode() {
+    alert("edit");
     if (this.saveBtn) {
       this.endEditMode();
       return;
