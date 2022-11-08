@@ -26,7 +26,7 @@ class NewPizza {
         <ul class="new-pizza">
           <button class="close-new-pizza-btn">X</button>
           <li class="new-pizza-name">
-          <span>Name: </span><input class="new-pizza-name-input" type="text" />
+          <span>Name: </span><input class="new-pizza-name-input" type="text" maxlength="20" />
           </li>
           <li>
           <span class="topping-number">Topping 1: </span>
@@ -219,7 +219,7 @@ class Pizza {
       this.endEditMode();
       return;
     }
-    this.thisName.innerHTML = `<input class="pizza-name-edit" type="text" value="${this.name}" />`;
+    this.thisName.innerHTML = `<input class="pizza-name-edit" type="text" value="${this.name}" maxlength="20" />`;
     const addBtn = `<button class="edit-add-topping-btn">Add Topping</button>`;
     const saveBtn = `<button class="edit-save-btn">Save Pizza</button>`;
     this.thisTile.insertAdjacentHTML("beforeend", addBtn);

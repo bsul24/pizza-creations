@@ -60,7 +60,7 @@ class Topping {
     }
     this.preEdit = this.topping;
     this.thisEl.firstElementChild.remove();
-    const inputNode = `<input type="text" value="${this.topping}" class="topping-text" />`;
+    const inputNode = `<input type="text" value="${this.topping}" class="topping-text" maxlength="20" />`;
     this.thisEl.insertAdjacentHTML("afterbegin", inputNode);
     this.input = this.thisEl.querySelector(".topping-text");
     this.input.setSelectionRange(this.topping.length, this.topping.length);
