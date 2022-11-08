@@ -217,9 +217,11 @@ class Pizza {
   startEditMode() {
     alert("edit");
     if (this.saveBtn) {
+      alert("edit 2");
       this.endEditMode();
       return;
     }
+    alert("edit 3");
     this.thisName.setHTML(
       `<input class="pizza-name-edit" type="text" value="${this.name}" />`
     );
