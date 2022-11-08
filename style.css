@@ -44,11 +44,24 @@ button {
   padding: 0 24px;
 }
 
+.main-container {
+  color: #fff;
+  max-width: 400px;
+  margin: 96px auto;
+  text-align: center;
+}
+
+.main-container h1 {
+  font-size: 52px;
+}
+
 .toppings-header {
   color: #fff;
   text-align: center;
   font-size: 36px;
   margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
 }
 
 #add-topping {
@@ -66,7 +79,7 @@ button {
   color: #fff;
   font-size: 24px;
   font-weight: 600;
-  padding-top: 16px;
+  /* padding-top: 16px; */
 }
 
 .clear-toppings {
@@ -91,6 +104,10 @@ button {
   display: flex;
 }
 
+.topping:first-child {
+  margin-top: 16px;
+}
+
 .topping-text {
   margin-right: auto;
   margin-left: 48px;
@@ -99,6 +116,13 @@ button {
 
 .topping-btns {
   margin-right: 48px;
+}
+
+.delete-btn {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
 }
 
 .hidden {
@@ -132,6 +156,10 @@ button {
 
 .new-pizza {
   list-style: none;
+}
+
+.new-pizza li {
+  margin-bottom: 16px;
 }
 
 .modal {
@@ -236,6 +264,7 @@ button {
 
 .pizza-tile-toppings-dropdown {
   margin-bottom: 12px;
+  font-size: 18px;
 }
 
 .edit-add-topping-btn {
@@ -245,7 +274,8 @@ button {
 .edit-add-topping-btn,
 .edit-save-btn,
 .link-btn,
-.add-submit-btn {
+.add-submit-btn,
+.add-ing-btn {
   margin-top: 12px;
   background-color: #226e32;
   color: #fff;
@@ -265,6 +295,11 @@ button {
   transform: scale(1.05);
 }
 
+.add-ing-btn {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
 .link-btn {
   display: inline-block;
   margin: 16px 0 0 16px;
@@ -272,13 +307,13 @@ button {
 }
 
 .delete-select-topping {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
 }
 
 .save-pizza-btn {
   cursor: pointer;
-  background-color: #37b24d;
+  background-color: #226e32;
   color: #fff;
   font-weight: bold;
   position: absolute;
@@ -291,7 +326,7 @@ button {
 }
 
 .save-pizza-btn:hover {
-  background-color: #2b8a3e;
+  background-color: #1e612b;
 }
 
 .pizza-tile-edit-btn {
@@ -307,6 +342,11 @@ button {
 }
 
 .remove-pizza-popup p {
+  margin-bottom: 16px;
+}
+
+.modal p {
+  color: #343a40;
   margin-bottom: 16px;
 }
 
