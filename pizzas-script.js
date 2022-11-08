@@ -215,16 +215,11 @@ class Pizza {
   }
 
   startEditMode() {
-    alert("edit");
     if (this.saveBtn) {
-      alert("edit 2");
       this.endEditMode();
       return;
     }
-    alert("edit 3");
-    this.thisName.setHTML(
-      `<input class="pizza-name-edit" type="text" value="${this.name}" />`
-    );
+    this.thisName.innerHTML = `<input class="pizza-name-edit" type="text" value="${this.name}" />`;
     const addBtn = `<button class="edit-add-topping-btn">Add Topping</button>`;
     const saveBtn = `<button class="edit-save-btn">Save Pizza</button>`;
     this.thisTile.insertAdjacentHTML("beforeend", addBtn);
